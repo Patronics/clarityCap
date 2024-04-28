@@ -6,9 +6,10 @@
 
 <body>
 <img src="/static/knownPeople/kyle.jpg" width=700>
-<h2>This is <span id=nameSpot>Kyle</span></h2>
-<p> You saw him last week<br/>
-and met him 3 months ago
+<h2>This is <span id=nameSpot>%{person.name}%</span></h2>
+<p>%{person.relation}%</p>
+<p>You last saw%{person.pronoun}% at %{person.lastSeen}%<br/>
+And met %{person.pronoun}% at %{person.firstSeen}%
 </p>
 
 </body>

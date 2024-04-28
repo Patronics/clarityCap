@@ -22,7 +22,7 @@ def queryForUpdate():
 def showPersonInfo():
 	try:
 		currentPerson = request.args["name"]
-		with open("static/knownPeople/"+currentPerson+".json") as personData
+		with open("static/knownPeople/"+currentPerson+".json") as personData:
 			currentPerson = personData
 		newPerson = True
 		return "True"

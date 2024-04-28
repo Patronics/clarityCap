@@ -1,7 +1,7 @@
 import face_recognition
 import cv2
 import numpy as np
-import os, json
+import os, json, datetime
 
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
 # other example, but it includes some basic performance tweaks to make things run a lot faster:
@@ -31,7 +31,7 @@ def load_faces(dir):
                 names.append(obj["name"])
     return encodings, names
 
-known_face_encodings, known_face_names = load_faces(dir)
+face_encodings, face_names = load_faces(dir)
 
 
 # Create arrays of known face encodings and their names
@@ -40,9 +40,6 @@ known_face_encodings, known_face_names = load_faces(dir)
 
 # Initialize some variables
 face_locations = []
-
-face_encodings = []
-face_names = []
 process_this_frame = True
 
 def is_whole_list_false(lst):
@@ -56,6 +53,7 @@ def build_new_face(face_encoding, face_image):
     name = input("name: ")
     if name == "q": return
     if not (name + ".json" in os.listdir(dir)):
+        relation = input("relation: ")
         face_encodings.append(face_encoding)
         face_names.append(name)
         print(name)
@@ -63,6 +61,10 @@ def build_new_face(face_encoding, face_image):
         f = open(dir + name + ".json", "w")
         f.write(json.dumps({
             "name": name,
+            "image": name + ".jpg",
+            "relation": relation,
+            "firstSeen": datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'),
+            "lastSeen": datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S'),
             "encodings": [face_encoding.tolist()],
         }))
         f.close()
@@ -114,10 +116,7 @@ while True:
                 build_new_face(face_encoding, face)
             else:
                 if best_guess >= 0:
-                    print(face_names[best_guess])
-
-            print(face_encoding)
-            
+                    print(face_names[best_guess])            
 
         else:
             print("ERROR")
