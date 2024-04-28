@@ -1,3 +1,5 @@
+pkill python
+pkill -f chromium-browser
 cd ./webui
 ../venv/bin/python ./app.py &
 cd ..

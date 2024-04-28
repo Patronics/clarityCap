@@ -69,12 +69,20 @@ def build_new_face(face_encoding, face_image):
 
 last_biggest_name = ""
 frames_since_false = 0
+
+cframe = 0
 while True:
 
     # Grab a single frame of video
     ret, frame = video_capture.read()
 
-    frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
+    cframe += 1
+    if cframe > 10:
+        cframe = 0
+    else:
+        continue
+
+    frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
     # frame = frame[:, :, ::-1]
     
     face_locations = face_recognition.face_locations(frame)
