@@ -1,7 +1,7 @@
 import face_recognition
 import cv2
 import numpy as np
-import os, json, datetime
+import os, json, datetime, requests
 
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
 # other example, but it includes some basic performance tweaks to make things run a lot faster:
@@ -32,7 +32,6 @@ def load_faces(dir):
     return encodings, names
 
 face_encodings, face_names = load_faces(dir)
-
 
 # Create arrays of known face encodings and their names
 # known_face_encodings = []
@@ -69,6 +68,7 @@ def build_new_face(face_encoding, face_image):
         }))
         f.close()
 
+last_biggest_name = ""
 while True:
 
     # Grab a single frame of video
@@ -93,8 +93,11 @@ while True:
         # frame = cv2.circle(frame, (x1, y1), 10, (0, 255, 0))
         # frame = cv2.circle(frame, (x2, y2), 10, (255, 0, 0))
 
+    biggest_name = ""
+    biggest_face_size = 0
     indx = -1
     for face in faces:
+        name = False
         indx +=1
         face_encoding_success = False
         try:
@@ -116,12 +119,21 @@ while True:
                 build_new_face(face_encoding, face)
             else:
                 if best_guess >= 0:
-                    print(face_names[best_guess])            
+                    name = face_names[best_guess]      
 
         else:
             print("ERROR")
+
+        if name != False:
+            face_size = face.size
+            if face_size > biggest_face_size: 
+                biggest_face_size = face_size
+                biggest_name = name
         # print(face.size)
         cv2.imshow(str(indx), face)
+    if biggest_name != last_biggest_name:
+        last_biggest_name = biggest_name
+        print(biggest_name)
 
     # Hit 'q' on the keyboard to quit!
     if cv2.waitKey(1) & 0xFF == ord('q'):

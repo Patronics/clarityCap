@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request
+import json
 app = Flask(__name__)
 
 newPerson = False
+global currentPerson 
 currentPerson = {}
 #currentPerson = ""
 #currentImage = ""
@@ -21,9 +23,9 @@ def queryForUpdate():
 
 def showPersonInfo():
 	try:
-		currentPerson = request.args["name"]
-		with open("static/knownPeople/"+currentPerson+".json") as personData:
-			currentPerson = personData
+		with open("static/knownPeople/"+request.args["name"]+".json") as personData:
+			global currentPerson
+			currentPerson = json.load(personData)
 		newPerson = True
 		return "True"
 	except Exception as e:
@@ -34,6 +36,8 @@ def showPersonInfo():
 @app.route("/")
 
 def main():
-	return render_template('index.html')
+	print("showing", end="")
+	print(currentPerson)
+	return render_template('index.html', person = currentPerson)
 
 app.run(host="0.0.0.0")

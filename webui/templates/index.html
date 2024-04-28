@@ -5,11 +5,11 @@
 </head>
 
 <body>
-<img src="/static/knownPeople/kyle.jpg" width=700>
-<h2>This is <span id=nameSpot>%{person.name}%</span></h2>
-<p>%{person.relation}%</p>
-<p>You last saw%{person.pronoun}% at %{person.lastSeen}%<br/>
-And met %{person.pronoun}% at %{person.firstSeen}%
+<img src="/static/knownPeople/{{person.image}}" width=700>
+<h2>This is <span id=nameSpot>{{person.name}}</span></h2>
+<p>{{person.relation}}</p>
+<p>You last saw{{person.pronoun}} at {{person.lastSeen}}<br/>
+And met {{person.pronoun}} at {{person.firstSeen}}
 </p>
 
 </body>
