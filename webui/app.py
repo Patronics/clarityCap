@@ -26,18 +26,21 @@ def showPersonInfo():
 		with open("static/knownPeople/"+request.args["name"]+".json") as personData:
 			global currentPerson
 			currentPerson = json.load(personData)
+		global newPerson
 		newPerson = True
-		return "True"
+		return "True", 200
 	except Exception as e:
 		print(e)
 		#error
-		return "False"
+		return "False", 400
 
 @app.route("/")
 
 def main():
 	print("showing", end="")
 	print(currentPerson)
+	global newPerson
+	newPerson = False
 	return render_template('index.html', person = currentPerson)
 
 app.run(host="0.0.0.0")

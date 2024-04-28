@@ -11,5 +11,31 @@
 <p>You last saw{{person.pronoun}} at {{person.lastSeen}}<br/>
 And met {{person.pronoun}} at {{person.firstSeen}}
 </p>
+<script>
+var host = "http://"+window.location.hostname;
+function httpGetAsync(theUrl, callback)
+{
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", theUrl, true); // true for asynchronous 
+    xmlHttp.send(null);
+}
+function handleUpdateCheckResponse(responseText){
+	console.log(responseText)
+	if(responseText=="True"){
+		location.reload();	
+	}
+}
 
+function checkForUpdates(){
+	httpGetAsync(window.location.origin+"/api/queryForUpdate", handleUpdateCheckResponse)
+	setTimeout(checkForUpdates, 3000)
+}
+
+
+checkForUpdates()
+</script>
 </body>
