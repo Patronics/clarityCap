@@ -1,3 +1,9 @@
 p{
 	font-size: x-large;
 }
+
+#description{
+	position: absolute;
+	left: 750px;
+	top: 100px;
+}

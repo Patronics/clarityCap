@@ -140,8 +140,10 @@ while True:
         cv2.imshow(str(indx), face)
     if biggest_name != last_biggest_name and biggest_name.strip() != "":
         last_biggest_name = biggest_name
-        # req = requests.get("http://127.0.0.1:5000/api/showPersonInfo?name=" + biggest_name)
-        # print(req)
+        try:
+            req = requests.get("http://127.0.0.1:5000/api/showPersonInfo?name=" + biggest_name)
+            print(req)
+        except: print("Failed Web Request.")
         print(biggest_name)
 
     # Hit 'q' on the keyboard to quit!

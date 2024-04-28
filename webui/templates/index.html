@@ -2,15 +2,19 @@
 
 <head>
 	<title>your friend</title>
+	<link rel="stylesheet" type="text/css" href="/static/style.css"/>
+
 </head>
 
 <body>
 <img src="/static/knownPeople/{{person.image}}" width=700>
+<div id="description">
 <h2>This is <span id=nameSpot>{{person.name}}</span></h2>
 <p>{{person.relation}}</p>
 <p>You last saw{{person.pronoun}} at {{person.lastSeen}}<br/>
 And met {{person.pronoun}} at {{person.firstSeen}}
 </p>
+</div>
 <script>
 var host = "http://"+window.location.hostname;
 function httpGetAsync(theUrl, callback)
@@ -32,7 +36,7 @@ function handleUpdateCheckResponse(responseText){
 
 function checkForUpdates(){
 	httpGetAsync(window.location.origin+"/api/queryForUpdate?name={{person.name}}", handleUpdateCheckResponse)
-	setTimeout(checkForUpdates, 3000)
+	setTimeout(checkForUpdates, 1500)
 }
 
 
