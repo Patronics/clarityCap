@@ -1,6 +1,7 @@
 import face_recognition
 import cv2
 import numpy as np
+import os, json
 
 # This is a demo of running face recognition on live video from your webcam. It's a little more complicated than the
 # other example, but it includes some basic performance tweaks to make things run a lot faster:
@@ -14,25 +15,64 @@ import numpy as np
 # Get a reference to webcam #0 (the default one)
 video_capture = cv2.VideoCapture(0)
 
+dir = "facial_detection/knownPeople/"
+
+def load_faces(dir):
+    encodings = []
+    names = []
+    for file in os.listdir(dir):
+        if file.split(".")[-1] == "json":
+            f = open(dir + file)
+            data = f.read()
+            f.close()
+            obj = json.loads(data)
+            for enc in obj["encodings"]:
+                encodings.append(np.array(enc))
+                names.append(obj["name"])
+    return encodings, names
+
+known_face_encodings, known_face_names = load_faces(dir)
+
+
 # Create arrays of known face encodings and their names
-known_face_encodings = []
-known_face_names = []
-
-known_image = face_recognition.load_image_file("facial_detection/knownPeople/kyle.jpg")
-
-biden_encoding = face_recognition.face_encodings(known_image)[0]
+# known_face_encodings = []
+# known_face_names = []
 
 # Initialize some variables
 face_locations = []
+
 face_encodings = []
 face_names = []
 process_this_frame = True
 
+def is_whole_list_false(lst):
+    for item in lst:
+        if item != False: 
+            return False
+    return True
+
+def build_new_face(face_encoding, face_image):
+    print("No face encodings enter name for face")
+    name = input("name: ")
+    if name == "q": return
+    if not (name + ".json" in os.listdir(dir)):
+        face_encodings.append(face_encoding)
+        face_names.append(name)
+        print(name)
+        cv2.imwrite(dir + name + ".jpg", face_image)
+        f = open(dir + name + ".json", "w")
+        f.write(json.dumps({
+            "name": name,
+            "encodings": [face_encoding.tolist()],
+        }))
+        f.close()
+
 while True:
+
     # Grab a single frame of video
     ret, frame = video_capture.read()
 
-    frame = cv2.resize(frame, (0, 0), fx=0.2, fy=0.2)
+    frame = cv2.resize(frame, (0, 0), fx=0.5, fy=0.5)
     # frame = frame[:, :, ::-1]
     
     face_locations = face_recognition.face_locations(frame)
@@ -62,18 +102,23 @@ while True:
             pass
         if face_encoding_success:
             result = face_recognition.compare_faces(face_encodings, face_encoding)
+            is_false = False
+            best_guess = -1
             if face_encodings == []:
-                print("No face encodings enter name for face")
-                name = input("name: ")
-                print(name)
-                face_encodings.append(face_encoding)
-                face_names.append(name)
+                build_new_face(face_encoding, face)
             else:
                 best_guess = np.argmax(result)
-                print(best_guess)
+                is_false = is_whole_list_false(result)
 
-            print("found face")
-            print(result)
+            if is_false:
+                build_new_face(face_encoding, face)
+            else:
+                if best_guess >= 0:
+                    print(face_names[best_guess])
+
+            print(face_encoding)
+            
+
         else:
             print("ERROR")
         # print(face.size)
