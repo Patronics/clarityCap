@@ -55,7 +55,6 @@ def build_new_face(face_encoding, face_image):
         relation = input("relation: ")
         face_encodings.append(face_encoding)
         face_names.append(name)
-        print(name)
         cv2.imwrite(dir + name + ".jpg", face_image)
         f = open(dir + name + ".json", "w")
         f.write(json.dumps({
@@ -69,6 +68,7 @@ def build_new_face(face_encoding, face_image):
         f.close()
 
 last_biggest_name = ""
+frames_since_false = 0
 while True:
 
     # Grab a single frame of video
@@ -83,13 +83,17 @@ while True:
     # results = face_recognition.compare_faces([biden_encoding], unknown_encoding)
     faces = []
     for floc in face_locations:
-        x2 = floc[1]
-        x1 = floc[3]
-        y2 = floc[2]
-        y1 = floc[0]
+        padding = 40
+        x2 = floc[1] + padding
+        x1 = floc[3] - padding
+        y2 = floc[2] + padding
+        y1 = floc[0] - padding
+        if x1 < 0: x1 = 0
+        if x2 < 0: x2 = 0
+        if y1 < 0: y1 = 0
+        if y2 < 0: y2 = 0
         # print(floc)
-        padding = 0
-        faces.append(frame[y1 - padding:y2 + padding, x1 - padding:x2 + padding])
+        faces.append(frame[y1:y2, x1:x2])
         # frame = cv2.circle(frame, (x1, y1), 10, (0, 255, 0))
         # frame = cv2.circle(frame, (x2, y2), 10, (255, 0, 0))
 
@@ -116,7 +120,10 @@ while True:
                 is_false = is_whole_list_false(result)
 
             if is_false:
-                build_new_face(face_encoding, face)
+                frames_since_false += 1
+                if frames_since_false > 4:
+                    frames_since_false = 0
+                    build_new_face(face_encoding, face)
             else:
                 if best_guess >= 0:
                     name = face_names[best_guess]      
@@ -133,8 +140,8 @@ while True:
         cv2.imshow(str(indx), face)
     if biggest_name != last_biggest_name and biggest_name.strip() != "":
         last_biggest_name = biggest_name
-        req = requests.get("http://127.0.0.1:5000/api/showPersonInfo?name=" + biggest_name)
-        print(req)
+        # req = requests.get("http://127.0.0.1:5000/api/showPersonInfo?name=" + biggest_name)
+        # print(req)
         print(biggest_name)
 
     # Hit 'q' on the keyboard to quit!

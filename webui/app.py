@@ -3,8 +3,8 @@ import json
 app = Flask(__name__)
 
 newPerson = False
-global currentPerson 
-currentPerson = {}
+global currentPerson
+currentPerson = {"name":"", "image":"", "relation":"", "lastSeen":"", "firstSeen":""}
 #currentPerson = ""
 #currentImage = ""
 #currentRelation = ""
@@ -16,7 +16,13 @@ currentPerson = {}
 
 
 def queryForUpdate():
-	return str(newPerson)
+	print(request.args["name"])
+	global currentPerson
+	print(currentPerson["name"])
+	if request.args["name"] != currentPerson["name"]:
+		return "True"
+	else:
+		return "False"
 
 
 @app.route("/api/showPersonInfo")
