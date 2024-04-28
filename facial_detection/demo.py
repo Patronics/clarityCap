@@ -52,7 +52,7 @@ def build_new_face(face_encoding, face_image):
     name = input("name: ")
     if name == "q": return
     if not (name + ".json" in os.listdir(dir)):
-        relation = input("relation: ")
+        relation = "hackdavis" #input("relation: ")
         face_encodings.append(face_encoding)
         face_names.append(name)
         cv2.imwrite(dir + name + ".jpg", face_image)
